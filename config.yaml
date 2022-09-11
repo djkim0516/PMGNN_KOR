@@ -29,9 +29,11 @@ train:
   lr: 0.0005
 
 filepath:
-  GPU-Server:
-    knowair_fp: /data/wangshuo/haze/pm25gnn/KnowAir.npy
-    results_dir: /data/wangshuo/haze/pm25gnn/results
+  # GPU-Server:
+  DJui-MacBookPro.local:
+    # knowair_fp: /data/wangshuo/haze/pm25gnn/KnowAir.npy
+    knowair_fp: /Users/djkim/github/PMGNN_KOR/data/KnowAir.npy
+    results_dir: /Users/djkim/github/PMGNN_KOR/results
 
 data:
   metero_var:

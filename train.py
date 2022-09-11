@@ -115,7 +115,9 @@ def get_model():
 def train(train_loader, model, optimizer):
     model.train()
     train_loss = 0
-    for batch_idx, data in tqdm(enumerate(train_loader)):
+    for batch_idx, data in enumerate(train_loader):
+        print("batch_idx :", batch_idx)
+        print("data : ", data)
         optimizer.zero_grad()
         pm25, feature, time_arr = data
         pm25 = pm25.to(device)
@@ -195,7 +197,7 @@ def main():
 
     for exp_idx in range(exp_repeat):
         print('\nNo.%2d experiment ~~~' % exp_idx)
-
+        print("train_data : ",len(train_data[0]))
         train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, drop_last=True)
         val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size, shuffle=False, drop_last=True)
         test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False, drop_last=True)

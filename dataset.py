@@ -129,7 +129,9 @@ class HazeData(data.Dataset):
 
     def _get_idx(self, t):
         t0 = self.data_start
-        return int((t.timestamp - t0.timestamp) / (60 * 60 * 3))
+        # print(t.timestamp())
+        # print(t0.timestamp())
+        return int((t.timestamp() - t0.timestamp()) / (60 * 60 * 3))
 
     def _get_time(self, time_yaml):
         arrow_time = arrow.get(datetime(*time_yaml[0]), time_yaml[1])
