@@ -1,0 +1,44 @@
+============== Train Info ==============
+Dataset number: 3
+Model: PM25_GNN
+Train: 2016-09-01T00:00:00+00:00 --> 2016-11-30T00:00:00+00:00
+Val: 2016-12-01T00:00:00+00:00 --> 2016-12-31T00:00:00+00:00
+Test: 2017-01-01T00:00:00+00:00 --> 2017-01-31T00:00:00+00:00
+City number: 184
+Use metero: ['2m_temperature', 'boundary_layer_height', 'k_index', 'relative_humidity+950', 'surface_pressure', 'total_precipitation', 'u_component_of_wind+950', 'v_component_of_wind+950']
+batch_size: 32
+epochs: 50
+hist_len: 1
+pred_len: 24
+weight_decay: 0.0005
+early_stop: 10
+lr: 0.0005
+========================================
+PM25_GNN(
+  (fc_in): Linear(in_features=13, out_features=64, bias=True)
+  (graph_gnn): GraphGNN(
+    (edge_mlp): Sequential(
+      (0): Linear(in_features=29, out_features=32, bias=True)
+      (1): Sigmoid()
+      (2): Linear(in_features=32, out_features=30, bias=True)
+      (3): Sigmoid()
+    )
+    (node_mlp): Sequential(
+      (0): Linear(in_features=30, out_features=13, bias=True)
+      (1): Sigmoid()
+    )
+  )
+  (gru_cell): GRUCell(
+    (x2h): Linear(in_features=26, out_features=192, bias=True)
+    (h2h): Linear(in_features=64, out_features=192, bias=True)
+  )
+  (fc_out): Linear(in_features=64, out_features=1, bias=True)
+)---------------------------------------
+train_loss | mean: 0.4475 std: 0.0137
+val_loss   | mean: 0.5188 std: 0.0078
+test_loss  | mean: 0.4650 std: 0.0147
+RMSE       | mean: 43.0380 std: 0.7037
+MAE        | mean: 35.2430 std: 0.6968
+CSI        | mean: 0.6145 std: 0.0050
+POD        | mean: 0.8443 std: 0.0121
+FAR        | mean: 0.3068 std: 0.0084

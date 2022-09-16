@@ -26,9 +26,10 @@ import shutil
 torch.set_num_threads(1)
 use_cuda = torch.cuda.is_available()
 device = torch.device('cuda' if use_cuda else 'cpu')
+# device = torch.device('mps')
 
 graph = Graph()
-city_num = graph.node_num
+city_num = graph.node_num           #그래프 노드 개수
 
 batch_size = config['train']['batch_size']
 epochs = config['train']['epochs']
@@ -115,14 +116,14 @@ def get_model():
 def train(train_loader, model, optimizer):
     model.train()
     train_loss = 0
-    for batch_idx, data in enumerate(train_loader):
-        print("batch_idx :", batch_idx)
-        print("data : ", data)
+    for batch_idx, data in enumerate(train_loader):     #! 데이터 받아옴
+        #!  print("batch_idx :", batch_idx)
+        #!  print("data : ", data)
         optimizer.zero_grad()
-        pm25, feature, time_arr = data
-        pm25 = pm25.to(device)
-        feature = feature.to(device)
-        pm25_label = pm25[:, hist_len:]
+        pm25, feature, time_arr = data                  
+        pm25 = pm25.to(device)                          #! 미세먼지 데이터
+        feature = feature.to(device)                    #! 그 외 기상 데이터
+        pm25_label = pm25[:, hist_len:]                 #! 미래 
         pm25_hist = pm25[:, :hist_len]
         pm25_pred = model(pm25_hist, feature)
         loss = criterion(pm25_pred, pm25_label)

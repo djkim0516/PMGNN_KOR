@@ -1,0 +1,34 @@
+============== Train Info ==============
+Dataset number: 3
+Model: MLP
+Train: 2016-09-01T00:00:00+00:00 --> 2016-11-30T00:00:00+00:00
+Val: 2016-12-01T00:00:00+00:00 --> 2016-12-31T00:00:00+00:00
+Test: 2017-01-01T00:00:00+00:00 --> 2017-01-31T00:00:00+00:00
+City number: 184
+Use metero: ['2m_temperature', 'boundary_layer_height', 'k_index', 'relative_humidity+950', 'surface_pressure', 'total_precipitation', 'u_component_of_wind+950', 'v_component_of_wind+950']
+batch_size: 32
+epochs: 50
+hist_len: 1
+pred_len: 24
+weight_decay: 0.0005
+early_stop: 10
+lr: 0.0005
+========================================
+MLP(
+  (fc_in): Linear(in_features=13, out_features=16, bias=True)
+  (fc_out): Linear(in_features=16, out_features=1, bias=True)
+  (mlp): Sequential(
+    (0): Linear(in_features=16, out_features=16, bias=True)
+    (1): Sigmoid()
+    (2): Linear(in_features=16, out_features=16, bias=True)
+    (3): Sigmoid()
+  )
+)---------------------------------------
+train_loss | mean: 0.6226 std: 0.0101
+val_loss   | mean: 0.7527 std: 0.0110
+test_loss  | mean: 0.5593 std: 0.0069
+RMSE       | mean: 46.7284 std: 0.3842
+MAE        | mean: 38.5270 std: 0.3912
+CSI        | mean: 0.5648 std: 0.0043
+POD        | mean: 0.7685 std: 0.0106
+FAR        | mean: 0.3192 std: 0.0107

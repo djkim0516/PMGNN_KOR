@@ -23,22 +23,22 @@ class Graph():
         self.alti_thres = 1200
         self.use_altitude = True
 
-        self.altitude = self._load_altitude()
+        self.altitude = self._load_altitude()       
         self.nodes = self._gen_nodes()
         self.node_attr = self._add_node_attr()
         self.node_num = len(self.nodes)
         self.edge_index, self.edge_attr = self._gen_edges()
         if self.use_altitude:
             self._update_edges()
-        self.edge_num = self.edge_index.shape[1]
-        self.adj = to_dense_adj(torch.LongTensor(self.edge_index))[0]
+        self.edge_num = self.edge_index.shape[1]                #! edge_index.shape[1] 전체 edge 갯수
+        self.adj = to_dense_adj(torch.LongTensor(self.edge_index))[0]       #! dense matrix로 재변환
 
     def _load_altitude(self):
         assert os.path.isfile(altitude_fp)
         altitude = np.load(altitude_fp)
         return altitude
 
-    def _lonlat2xy(self, lon, lat, is_aliti):
+    def _lonlat2xy(self, lon, lat, is_aliti):                   #! 위경도 -> xy좌표
         if is_aliti:
             lon_l = 100.0
             lon_r = 128.0
@@ -55,9 +55,9 @@ class Graph():
         y = np.int64(np.round((lat_u + res / 2 - lat) / res))
         return x, y
 
-    def _gen_nodes(self):
+    def _gen_nodes(self):                   #! dict 형태로 추가해서 반환
         nodes = OrderedDict()
-        with open(city_fp, 'r') as f:
+        with open(city_fp, 'r') as f:           #! txt file
             for line in f:
                 idx, city, lon, lat = line.rstrip('\n').split(' ')
                 idx = int(idx)
@@ -71,7 +71,7 @@ class Graph():
         node_attr = []
         altitude_arr = []
         for i in self.nodes:
-            altitude = self.nodes[i]['altitude']
+            altitude = self.nodes[i]['altitude']            #! _gen_nodes altitude
             altitude_arr.append(altitude)
         altitude_arr = np.stack(altitude_arr)
         node_attr = np.stack([altitude_arr], axis=-1)
@@ -107,23 +107,23 @@ class Graph():
         lonlat = {}
         for i in self.nodes:
             coords.append([self.nodes[i]['lon'], self.nodes[i]['lat']])
-        dist = distance.cdist(coords, coords, 'euclidean')
-        adj = np.zeros((self.node_num, self.node_num), dtype=np.uint8)
-        adj[dist <= self.dist_thres] = 1
+        dist = distance.cdist(coords, coords, 'euclidean')              #! 각 node간의 거리 계산 후 반환
+        adj = np.zeros((self.node_num, self.node_num), dtype=np.uint8)      #! adj matrix 생성
+        adj[dist <= self.dist_thres] = 1                            #! threshold보다 작으면 1로, 너무 멀면 0
         assert adj.shape == dist.shape
-        dist = dist * adj
-        edge_index, dist = dense_to_sparse(torch.tensor(dist))
+        dist = dist * adj                   #! 원소 곱
+        edge_index, dist = dense_to_sparse(torch.tensor(dist))          #! sparse matrix 반환
         edge_index, dist = edge_index.numpy(), dist.numpy()
 
         direc_arr = []
         dist_kilometer = []
-        for i in range(edge_index.shape[1]):
-            src, dest = edge_index[0, i], edge_index[1, i]
+        for i in range(edge_index.shape[1]):            #! edge_index.shape[1] 전체 edge 갯수
+            src, dest = edge_index[0, i], edge_index[1, i]              #! src -> dest
             src_lat, src_lon = self.nodes[src]['lat'], self.nodes[src]['lon']
             dest_lat, dest_lon = self.nodes[dest]['lat'], self.nodes[dest]['lon']
             src_location = (src_lat, src_lon)
             dest_location = (dest_lat, dest_lon)
-            dist_km = geodesic(src_location, dest_location).kilometers
+            dist_km = geodesic(src_location, dest_location).kilometers      #!WSG-84 distance
             v, u = src_lat - dest_lat, src_lon - dest_lon
 
             u = u * units.meter / units.second
@@ -133,7 +133,7 @@ class Graph():
             direc_arr.append(direc)
             dist_kilometer.append(dist_km)
 
-        direc_arr = np.stack(direc_arr)
+        direc_arr = np.stack(direc_arr)         #! list->np.array
         dist_arr = np.stack(dist_kilometer)
         attr = np.stack([dist_arr, direc_arr], axis=-1)
 

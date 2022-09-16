@@ -12,7 +12,7 @@ class GraphGNN(nn.Module):
     def __init__(self, device, edge_index, edge_attr, in_dim, out_dim, wind_mean, wind_std):
         super(GraphGNN, self).__init__()
         self.device = device
-        self.edge_index = torch.LongTensor(edge_index).to(self.device)
+        self.edge_index = torch.LongTensor(edge_index).to(self.device)          #* train.graph.edge_index
         self.edge_attr = torch.Tensor(np.float32(edge_attr))
         self.edge_attr_norm = (self.edge_attr - self.edge_attr.mean(dim=0)) / self.edge_attr.std(dim=0)
         self.w = Parameter(torch.rand([1]))
@@ -47,11 +47,14 @@ class GraphGNN(nn.Module):
         self.edge_attr_ = self.edge_attr[None, :, :].repeat(node_src.size(0), 1, 1)
         city_dist = self.edge_attr_[:,:,0]
         city_direc = self.edge_attr_[:,:,1]
+        print(f"city_direc : {city_direc}")
+        print(f"src_wind_direc : {src_wind_direc}")
 
-        theta = torch.abs(city_direc - src_wind_direc)
-        edge_weight = F.relu(3 * src_wind_speed * torch.cos(theta) / city_dist)
+        theta = torch.abs(city_direc - src_wind_direc)                              #! 도시의 방향과 바람 방향 각도 빼기
+        print(f"theta : {theta}")
+        edge_weight = F.relu(3 * src_wind_speed * torch.cos(theta) / city_dist)     #! cos(theta), relu 통해서 반대 방향이면 0으로 처리
         edge_weight = edge_weight.to(self.device)
-        edge_attr_norm = self.edge_attr_norm[None, :, :].repeat(node_src.size(0), 1, 1).to(self.device)
+        edge_attr_norm = self.edge_attr_norm[None, :, :].repeat(node_src.size(0), 1, 1).to(self.device)     #! dim 늘리고 반복
         out = torch.cat([node_src, node_target, edge_attr_norm, edge_weight[:,:,None]], dim=-1)
 
         out = self.edge_mlp(out)
@@ -78,9 +81,9 @@ class PM25_GNN(nn.Module):
         self.in_dim = in_dim
         self.hid_dim = 64
         self.out_dim = 1
-        self.gnn_out = 13
+        self.gnn_out = 13           #? 왜 13개?
 
-        self.fc_in = nn.Linear(self.in_dim, self.hid_dim)
+        self.fc_in = nn.Linear(self.in_dim, self.hid_dim)       #! 여기서는 안쓰임
         self.graph_gnn = GraphGNN(self.device, edge_index, edge_attr, self.in_dim, self.gnn_out, wind_mean, wind_std)
         self.gru_cell = GRUCell(self.in_dim + self.gnn_out, self.hid_dim)
         self.fc_out = nn.Linear(self.hid_dim, self.out_dim)
@@ -89,12 +92,12 @@ class PM25_GNN(nn.Module):
         pm25_pred = []
         h0 = torch.zeros(self.batch_size * self.city_num, self.hid_dim).to(self.device)
         hn = h0
-        xn = pm25_hist[:, -1]
-        for i in range(self.pred_len):
-            x = torch.cat((xn, feature[:, self.hist_len + i]), dim=-1)
+        xn = pm25_hist[:, -1]                   #! 마지막 pm25 데이터에다가 ~
+        for i in range(self.pred_len):                     #! self.pred_len = 24
+            x = torch.cat((xn, feature[:, self.hist_len + i]), dim=-1)          #! feature data concat
 
             xn_gnn = x
-            xn_gnn = xn_gnn.contiguous()
+            xn_gnn = xn_gnn.contiguous()        #! 주소값 연속성 불변 문제
             xn_gnn = self.graph_gnn(xn_gnn)
             x = torch.cat([xn_gnn, x], dim=-1)
 
