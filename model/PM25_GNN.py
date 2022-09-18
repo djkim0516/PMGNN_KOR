@@ -47,11 +47,11 @@ class GraphGNN(nn.Module):
         self.edge_attr_ = self.edge_attr[None, :, :].repeat(node_src.size(0), 1, 1)
         city_dist = self.edge_attr_[:,:,0]
         city_direc = self.edge_attr_[:,:,1]
-        print(f"city_direc : {city_direc}")
-        print(f"src_wind_direc : {src_wind_direc}")
+        # print(f"city_direc : {city_direc}")
+        # print(f"src_wind_direc : {src_wind_direc}")
 
         theta = torch.abs(city_direc - src_wind_direc)                              #! 도시의 방향과 바람 방향 각도 빼기
-        print(f"theta : {theta}")
+        # print(f"theta : {theta}")
         edge_weight = F.relu(3 * src_wind_speed * torch.cos(theta) / city_dist)     #! cos(theta), relu 통해서 반대 방향이면 0으로 처리
         edge_weight = edge_weight.to(self.device)
         edge_attr_norm = self.edge_attr_norm[None, :, :].repeat(node_src.size(0), 1, 1).to(self.device)     #! dim 늘리고 반복

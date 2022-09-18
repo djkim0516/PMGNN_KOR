@@ -2,7 +2,7 @@ import yaml
 import sys
 import os
 import numpy as np
-
+import platform
 
 proj_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(proj_dir)
@@ -11,7 +11,8 @@ with open(conf_fp) as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
 
 
-nodename = os.uname().nodename
+# nodename = os.uname().nodename      #if mac
+nodename = platform.uname().node      #if windows
 file_dir = config['filepath'][nodename]
 
 

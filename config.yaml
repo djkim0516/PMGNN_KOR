@@ -30,10 +30,14 @@ train:
 
 filepath:
   # GPU-Server:
-  DJui-MacBookPro.local:
+  # DJui-MacBookPro.local:    #if Mac
+  #   knowair_fp: /Users/djkim/github/PMGNN_KOR/data/KnowAir.npy
+  #   results_dir: /Users/djkim/github/PMGNN_KOR/results
+  DJK-PC:                     #if Windows
     # knowair_fp: /data/wangshuo/haze/pm25gnn/KnowAir.npy
-    knowair_fp: /Users/djkim/github/PMGNN_KOR/data/KnowAir.npy
-    results_dir: /Users/djkim/github/PMGNN_KOR/results
+    # knowair_fp: /Users/djkim/github/PMGNN_KOR/data/KnowAir.npy
+    knowair_fp: data/KnowAir.npy
+    results_dir: results
 
 data:
   metero_var:
