@@ -133,4 +133,6 @@ dmypy.json
 #dataset
 */KnowAir.npy
 */total_solar_weather_pm_2013_2020.npy
-
+*.nc
+*한반도90m_GRS80.img
+*/KR_dataset.npy

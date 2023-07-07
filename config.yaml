@@ -33,7 +33,8 @@ filepath:
   # DJui-MacBookPro.local:    #if Mac
   #   knowair_fp: /Users/djkim/github/PMGNN_KOR/data/KnowAir.npy
   #   results_dir: /Users/djkim/github/PMGNN_KOR/results
-  DJK-PC:                     #if Windows
+  # DJK-PC:                     #if Windows
+  DESKTOP-32SHJJN:                     #if Windows
     # knowair_fp: /data/wangshuo/haze/pm25gnn/KnowAir.npy
     # knowair_fp: /Users/djkim/github/PMGNN_KOR/data/KnowAir.npy
     knowair_fp: data/KnowAir.npy

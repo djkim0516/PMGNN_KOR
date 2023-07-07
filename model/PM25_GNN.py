@@ -83,7 +83,7 @@ class PM25_GNN(nn.Module):
         self.out_dim = 1
         self.gnn_out = 13           #? 왜 13개?
 
-        self.fc_in = nn.Linear(self.in_dim, self.hid_dim)       #! 여기서는 안쓰임
+        self.fc_in = nn.Linear(self.in_dim, self.hid_dim)       #! 여기서는 안쓰임?
         self.graph_gnn = GraphGNN(self.device, edge_index, edge_attr, self.in_dim, self.gnn_out, wind_mean, wind_std)
         self.gru_cell = GRUCell(self.in_dim + self.gnn_out, self.hid_dim)
         self.fc_out = nn.Linear(self.hid_dim, self.out_dim)

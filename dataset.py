@@ -90,8 +90,8 @@ class HazeData(data.Dataset):
 
         u = self.feature[:, :, -2] * units.meter / units.second #! 'u_component_of_wind+950'    #! 단위 
         v = self.feature[:, :, -1] * units.meter / units.second #! 'v_component_of_wind+950'
-        speed = 3.6 * mpcalc.wind_speed(u, v)._magnitude        #! 풍속 계산 (필요?)
-        direc = mpcalc.wind_direction(u, v)._magnitude          #! 풍향 계산 (필요?)
+        speed = 3.6 * mpcalc.wind_speed(u, v)._magnitude        #! 풍속 계산 (필요?) 삭제
+        direc = mpcalc.wind_direction(u, v)._magnitude          #! 풍향 계산 (필요?) 삭제
 
         h_arr = []
         w_arr = []

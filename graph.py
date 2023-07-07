@@ -38,21 +38,49 @@ class Graph():
         altitude = np.load(altitude_fp)
         return altitude
 
-    def _lonlat2xy(self, lon, lat, is_aliti):                   #! 위경도 -> xy좌표
+    def _lonlat2xy(self, lon, lat, is_aliti):                   #! 위경도 -> xy좌표 (x>0, y>0)
+        # if is_aliti:
+        #     # lon_l = 100.0       #128.0
+        #     lon_l = 128.0
+        #     lon_r = 132.0
+        #     # 4 -- 7800
+        #     # lat_u = 48.0        #33.0
+        #     lat_u = 43.0
+        #     lat_d = 33.0
+        #     # 10
+        #     res = 0.05            #0.05 = 28/560
+        #     res = 0.05            #0.05 = 4/7800? 10/12500? 
+        # else:
+        #     lon_l = 103.0
+        #     lon_r = 122.0
+        #     lat_u = 42.0
+        #     lat_d = 28.0
+        #     res = 0.125
+            
+        # x = np.int64(np.round((lon - lon_l - res / 2) / res))
+        # y = np.int64(np.round((lat_u + res / 2 - lat) / res))
+        # return x, y
         if is_aliti:
-            lon_l = 100.0
-            lon_r = 128.0
-            lat_u = 48.0
-            lat_d = 16.0
-            res = 0.05
-        else:
-            lon_l = 103.0
-            lon_r = 122.0
-            lat_u = 42.0
-            lat_d = 28.0
-            res = 0.125
-        x = np.int64(np.round((lon - lon_l - res / 2) / res))
-        y = np.int64(np.round((lat_u + res / 2 - lat) / res))
+            # lon_l = 100.0       #128.0
+            lon_l = 128.0
+            lon_r = 132.0
+            # 4 -- 7800
+            # lat_u = 48.0        #33.0
+            lat_u = 43.0
+            lat_d = 33.0
+            # 10
+            # res = 0.05            #0.05 = 28/560
+            res_lat = (lat_u-lat_d)/12500            #0.05 = 4/7800? 10/12500? 
+            res_lon = (lon_r-lon_l)/7800
+        # else:
+        #     lon_l = 103.0
+        #     lon_r = 122.0
+        #     lat_u = 42.0
+        #     lat_d = 28.0
+        #     res = 0.125
+            
+        x = np.int64(np.round((lon - lon_l - res_lon / 2) / res_lon))
+        y = np.int64(np.round((lat_u + res_lat / 2 - lat) / res_lat))
         return x, y
 
     def _gen_nodes(self):                   #! dict 형태로 추가해서 반환
@@ -146,7 +174,7 @@ class Graph():
             src, dest = self.edge_index[0, i], self.edge_index[1, i]
             src_lat, src_lon = self.nodes[src]['lat'], self.nodes[src]['lon']
             dest_lat, dest_lon = self.nodes[dest]['lat'], self.nodes[dest]['lon']
-            src_x, src_y = self._lonlat2xy(src_lon, src_lat, True)
+            src_x, src_y = self._lonlat2xy(src_lon, src_lat, True)              #!
             dest_x, dest_y = self._lonlat2xy(dest_lon, dest_lat, True)
             points = np.asarray(list(bresenham(src_y, src_x, dest_y, dest_x))).transpose((1,0))
             altitude_points = self.altitude[points[0], points[1]]
